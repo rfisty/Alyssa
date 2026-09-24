@@ -1,35 +1,54 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
 
+
 :root {
-  color-scheme: dark;
-  --ink: #f8f2e9;
+  --text: #f8f2e9;
   --muted: #b9b6b4;
   --pink: #f6b5aa;
-  --line: #4b4c50;
 }
+
 
 * {
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-}
 
+html,
 body {
   margin: 0;
-  background: #1b232d;
-  color: var(--ink);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 16px;
-  line-height: 1.65;
+  min-height: 100%;
 }
 
+
+body {
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  background: #1b232d;
+
+  color: var(--text);
+
+  font-family: "DM Sans", sans-serif;
+}
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
 body::before {
-  content: '';
+  content: "";
+
   position: fixed;
   inset: 0;
+
   z-index: -1;
+
   background:
     radial-gradient(
       ellipse at 65% 20%,
@@ -41,253 +60,518 @@ body::before {
       #42313e 0%,
       transparent 47%
     );
+
   pointer-events: none;
 }
 
-a {
-  color: inherit;
-}
 
-header {
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.container {
+  width: 100%;
+  max-width: 1000px;
+
+  text-align: center;
+
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1180px;
-  margin: auto;
-  padding: 27px 32px;
+  flex-direction: column;
+
+  gap: 90px;
 }
 
-.brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  letter-spacing: 0.02em;
+
+/* =========================
+   TIMER
+========================= */
+
+.timer-section {
+  width: 100%;
 }
 
-.nav {
-  font-size: 0.85rem;
-  text-decoration: none;
-  border-bottom: 1px solid var(--pink);
-  padding-bottom: 3px;
-}
 
-main {
-  max-width: 1180px;
-  margin: auto;
-  padding: 0 32px;
-}
+.label {
+  margin: 0 0 28px;
 
-.hero {
-  min-height: 680px;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: 4vw;
-  padding: 50px 0 85px;
-}
-
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.26em;
-  font-size: 0.75rem;
   color: var(--pink);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.25em;
+
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(4.2rem, 9vw, 8.5rem);
-  line-height: 0.99;
-  font-weight: 500;
-  letter-spacing: -0.055em;
-  margin: 22px 0 30px;
-  max-width: 760px;
+
+.timer {
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
+
+  gap: 20px;
+
+  align-items: start;
 }
 
-.hero h1 em {
-  color: var(--pink);
-  font-weight: 500;
+
+.time-box {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
 }
 
-.intro {
-  max-width: 450px;
-  color: #ddd8d5;
-  font-size: 1.15rem;
-  line-height: 1.75;
+
+.time-box span {
+  font-family: "Playfair Display", serif;
+
+  font-size: clamp(2.6rem, 6vw, 5.5rem);
+
+  line-height: 1;
+
+  color: var(--text);
 }
 
-.button {
-  display: inline-block;
-  margin-top: 25px;
-  padding: 13px 24px;
-  border: 1px solid var(--pink);
-  border-radius: 100px;
-  text-decoration: none;
-  color: var(--pink);
-  font-size: 0.9rem;
-  transition: 0.2s;
+
+.time-box small {
+  color: var(--muted);
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.15em;
+
+  font-size: 0.7rem;
 }
 
-.button:hover,
-.button:focus-visible {
-  background: var(--pink);
-  color: #1b232d;
+
+/* =========================
+   HEART SECTION
+========================= */
+
+.heart-section {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+
+  gap: 10px;
 }
 
-.art {
+
+.heart-wrap {
   position: relative;
-  aspect-ratio: 4 / 5;
-  border-radius: 230px 230px 12px 12px;
-  overflow: hidden;
-  background: linear-gradient(
-    145deg,
-    #ca9c9a,
-    #5f4c61 55%,
-    #292f3a
-  );
-  box-shadow: 0 30px 90px #0c1019a8;
-}
 
-.art::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      circle at 48% 44%,
-      #ffdfc3 0 5%,
-      transparent 6%
-    ),
-    radial-gradient(
-      ellipse at 47% 43%,
-      #d59eaa 0 20%,
-      transparent 21%
-    ),
-    radial-gradient(
-      ellipse at 35% 55%,
-      #876276 0 18%,
-      transparent 19%
-    ),
-    radial-gradient(
-      ellipse at 61% 58%,
-      #aa768b 0 18%,
-      transparent 19%
-    ),
-    radial-gradient(
-      ellipse at 50% 74%,
-      #424c4c 0 29%,
-      transparent 30%
-    );
-  filter: blur(32px);
-  opacity: 0.8;
-}
+  width: 190px;
+  height: 170px;
 
-.art::after {
-  content: '♡';
-  position: absolute;
-  inset: 0;
   display: grid;
   place-items: center;
-  color: #fff5ecb8;
-  font-family: serif;
-  font-size: clamp(9rem, 24vw, 22rem);
-  font-weight: 100;
-  text-shadow: 0 8px 50px #4e384d;
 }
 
-.art small {
+
+/* =========================
+   HEART BUTTON
+========================= */
+
+.heart-button {
+  position: relative;
+
+  width: 150px;
+  height: 140px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  outline: none;
+
+  background: transparent;
+
+  padding: 0;
+
+  cursor: pointer;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 9rem;
+
+  line-height: 1;
+
+  color: #f6b5aa;
+
+  filter:
+    drop-shadow(
+      0 10px 20px rgba(246, 181, 170, 0.18)
+    )
+    drop-shadow(
+      0 0 25px rgba(246, 181, 170, 0.15)
+    );
+
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+
+  user-select: none;
+
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+/* =========================
+   HEART HOVER
+========================= */
+
+@media (hover: hover) and (pointer: fine) {
+
+  .heart-button:hover {
+    transform: scale(1.08);
+
+    filter:
+      drop-shadow(
+        0 12px 25px rgba(246, 181, 170, 0.35)
+      )
+      drop-shadow(
+        0 0 40px rgba(246, 181, 170, 0.3)
+      );
+  }
+
+}
+
+
+/* Keyboard focus */
+
+.heart-button:focus-visible {
+  outline: 2px solid var(--pink);
+
+  outline-offset: 8px;
+
+  border-radius: 50%;
+}
+
+
+/* =========================
+   HEART CLICK POP
+========================= */
+
+.heart-button.clicked {
+  animation: heartPop 0.55s ease;
+}
+
+
+@keyframes heartPop {
+
+  0% {
+    transform: scale(1);
+  }
+
+  20% {
+    transform: scale(0.78);
+  }
+
+  50% {
+    transform: scale(1.27);
+  }
+
+  70% {
+    transform: scale(0.94);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+
+/* =========================
+   GLOW RING
+========================= */
+
+.heart-button::after {
+  content: "";
+
   position: absolute;
-  bottom: 22px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  z-index: 1;
-  color: #fff;
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 1.25rem;
+
+  width: 95px;
+  height: 95px;
+
+  border: 2px solid rgba(246, 181, 170, 0.8);
+
+  border-radius: 50%;
+
+  opacity: 0;
+
+  transform: scale(0.5);
+
+  pointer-events: none;
 }
 
-.divider {
-  height: 1px;
-  background: var(--line);
+
+.heart-button.clicked::after {
+  animation: heartRing 0.7s ease-out;
 }
 
-.letter {
-  padding: 110px 0 120px;
-  max-width: 760px;
-  margin: auto;
+
+@keyframes heartRing {
+
+  0% {
+    opacity: 0.8;
+
+    transform: scale(0.5);
+  }
+
+  100% {
+    opacity: 0;
+
+    transform: scale(2);
+  }
+
 }
 
-.letter h2 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  font-size: clamp(2.5rem, 5vw, 4.6rem);
-  line-height: 1.2;
-  letter-spacing: -0.04em;
-  margin: 15px 0 35px;
+
+/* =========================
+   HEART COUNTER
+========================= */
+
+.heart-count {
+  margin: 0;
+
+  font-family: "Playfair Display", serif;
+
+  line-height: 1;
 }
 
-.letter p {
-  color: #dfd9d5;
-  font-size: 1.18rem;
-  line-height: 1.9;
+
+.heart-count span {
+  color: var(--pink);
+
+  font-size: 3rem;
 }
 
-.signature {
-  font-family: 'Playfair Display', serif;
-  font-style: italic;
-  font-size: 1.8rem !important;
-  color: var(--pink) !important;
-  margin-top: 45px;
-}
 
-footer {
-  border-top: 1px solid var(--line);
-  padding: 28px 32px;
-  text-align: center;
+.heart-label {
+  margin: 4px 0 0;
+
   color: var(--muted);
-  font-size: 0.85rem;
+
+  font-size: 0.8rem;
+
+  letter-spacing: 0.08em;
 }
 
-@media (max-width: 750px) {
-  header,
-  main {
-    padding-left: 22px;
-    padding-right: 22px;
-  }
 
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    padding: 55px 0 75px;
-    min-height: 0;
-  }
+/* =========================
+   PARTICLE CONTAINER
+========================= */
 
-  .hero h1 {
-    font-size: clamp(4rem, 16vw, 6rem);
-  }
+.heart-particles {
+  position: absolute;
 
-  .art {
-    width: min(100%, 410px);
-    margin: auto;
-    aspect-ratio: 1 / 1.1;
-  }
+  inset: 0;
 
-  .letter {
-    padding: 75px 0 85px;
-  }
+  pointer-events: none;
 
-  .letter p {
-    font-size: 1.05rem;
-  }
+  overflow: visible;
 }
+
+
+/* =========================
+   FLOATING HEART PARTICLES
+========================= */
+
+.particle {
+  position: absolute;
+
+  left: 50%;
+  top: 50%;
+
+  color: #f6b5aa;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 1.3rem;
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 12px rgba(246, 181, 170, 0.35);
+
+  animation:
+    floatHeart 1s ease-out forwards;
+}
+
+
+@keyframes floatHeart {
+
+  0% {
+    opacity: 1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(0.4)
+      rotate(var(--rotation));
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+
+    transform:
+      translate(
+        calc(-50% + var(--x)),
+        calc(-50% + var(--y))
+      )
+      scale(1.4)
+      rotate(var(--rotation));
+  }
+
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 850px) {
+
+  .timer {
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 32px 18px;
+  }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+  body {
+    padding: 22px;
+  }
+
+
+  .container {
+    gap: 70px;
+  }
+
+
+  .label {
+    margin-bottom: 25px;
+  }
+
+
+  .timer {
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 32px 15px;
+  }
+
+
+  .time-box span {
+    font-size: clamp(
+      3rem,
+      15vw,
+      4.8rem
+    );
+  }
+
+
+  .time-box:last-child {
+    grid-column: 1 / -1;
+  }
+
+
+  .heart-wrap {
+    width: 170px;
+    height: 155px;
+  }
+
+
+  .heart-button {
+    width: 135px;
+    height: 125px;
+
+    font-size: 8rem;
+  }
+
+
+  .heart-count span {
+    font-size: 2.7rem;
+  }
+
+}
+
+
+/* =========================
+   VERY SMALL PHONES
+========================= */
+
+@media (max-width: 380px) {
+
+  body {
+    padding: 18px;
+  }
+
+
+  .container {
+    gap: 60px;
+  }
+
+
+  .timer {
+    gap: 28px 10px;
+  }
+
+
+  .time-box span {
+    font-size: 2.8rem;
+  }
+
+
+  .time-box small {
+    font-size: 0.62rem;
+
+    letter-spacing: 0.12em;
+  }
+
+
+  .heart-button {
+    font-size: 7.5rem;
+  }
+
+}
+
+
+/* =========================
+   REDUCED MOTION
+========================= */
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
   }
 
-  * {
-    transition: none !important;
-  }
 }
