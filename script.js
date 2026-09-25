@@ -432,188 +432,166 @@ function createHeartBurst() {
 // SPOTIFY CURRENTLY PLAYING
 // =======================================
 
-// CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
 const spotifyWorkerUrl =
-  "https://aly-spotify.r1borisoff.workers.dev";
+    "https://aly-spotify.r1borisoff.workers.dev";
 
 
 const spotifyCover =
-  document.getElementById("spotifyCover");
+    document.getElementById("spotifyCover");
 
 const spotifyStatus =
-  document.getElementById("spotifyStatus");
+    document.getElementById("spotifyStatus");
 
 const spotifyTitle =
-  document.getElementById("spotifyTitle");
+    document.getElementById("spotifyTitle");
 
 const spotifyArtist =
-  document.getElementById("spotifyArtist");
-
-const spotifyLink =
-  document.getElementById("spotifyLink");
+    document.getElementById("spotifyArtist");
 
 
 
 async function updateSpotify() {
 
-  try {
+    try {
 
-    const response = await fetch(
-      `${spotifyWorkerUrl}/current?t=${Date.now()}`,
-      {
-        method: "GET",
-        cache: "no-store"
-      }
-    );
+        const currentSpotifyUrl =
+            new URL("/current", spotifyWorkerUrl);
+
+        currentSpotifyUrl.searchParams.set(
+            "t",
+            Date.now()
+        );
 
 
-    if (!response.ok) {
-      throw new Error(
-        `HTTP ${response.status}`
-      );
+        const response =
+            await fetch(
+                currentSpotifyUrl,
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Spotify response:",
+            data
+        );
+
+
+        // =====================================
+        // NOT CONNECTED
+        // =====================================
+
+        if (data.connected !== true) {
+
+            spotifyStatus.textContent =
+                "Spotify not connected";
+
+            spotifyTitle.textContent =
+                "";
+
+            spotifyArtist.textContent =
+                "";
+
+            spotifyCover.style.display =
+                "none";
+
+            return;
+        }
+
+
+        // =====================================
+        // CONNECTED BUT NOTHING PLAYING
+        // =====================================
+
+        if (data.playing !== true) {
+
+            spotifyStatus.textContent =
+                "Not listening right now";
+
+            spotifyTitle.textContent =
+                "";
+
+            spotifyArtist.textContent =
+                "";
+
+            spotifyCover.style.display =
+                "none";
+
+            return;
+        }
+
+
+        // =====================================
+        // NOW PLAYING
+        // =====================================
+
+        spotifyStatus.textContent =
+            "Now playing";
+
+
+        spotifyTitle.textContent =
+            data.title || "Unknown song";
+
+
+        spotifyArtist.textContent =
+            data.artist || "Unknown artist";
+
+
+        // Album cover
+
+        if (data.image) {
+
+            spotifyCover.src =
+                data.image;
+
+            spotifyCover.alt =
+                `${data.title || "Album"} cover`;
+
+            spotifyCover.style.display =
+                "block";
+
+        } else {
+
+            spotifyCover.style.display =
+                "none";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Spotify error:",
+            error
+        );
+
+
+        spotifyStatus.textContent =
+            "Couldn't load Spotify";
+
+        spotifyTitle.textContent =
+            "";
+
+        spotifyArtist.textContent =
+            "";
+
+        spotifyCover.style.display =
+            "none";
+
     }
-
-
-    const data =
-      await response.json();
-
-
-    // Debug — check browser console
-    console.log(
-      "Spotify response:",
-      data
-    );
-
-
-    // =====================================
-    // NOT CONNECTED
-    // =====================================
-
-    if (data.connected !== true) {
-
-      spotifyStatus.textContent =
-        "Spotify not connected";
-
-      spotifyTitle.textContent =
-        "";
-
-      spotifyArtist.textContent =
-        "";
-
-      spotifyCover.style.display =
-        "none";
-
-      spotifyLink.style.display =
-        "none";
-
-      return;
-    }
-
-
-    // =====================================
-    // CONNECTED BUT NOTHING PLAYING
-    // =====================================
-
-    if (data.playing !== true) {
-
-      spotifyStatus.textContent =
-        "Not listening right now";
-
-      spotifyTitle.textContent =
-        "";
-
-      spotifyArtist.textContent =
-        "";
-
-      spotifyCover.style.display =
-        "none";
-
-      spotifyLink.style.display =
-        "none";
-
-      return;
-    }
-
-
-    // =====================================
-    // NOW PLAYING
-    // =====================================
-
-    spotifyStatus.textContent =
-      "Now playing";
-
-
-    spotifyTitle.textContent =
-      data.title || "Unknown song";
-
-
-    spotifyArtist.textContent =
-      data.artist || "Unknown artist";
-
-
-    // Album artwork
-
-    if (data.image) {
-
-      spotifyCover.src =
-        data.image;
-
-      spotifyCover.alt =
-        `${data.title || "Album"} cover`;
-
-      spotifyCover.style.display =
-        "block";
-
-    } else {
-
-      spotifyCover.style.display =
-        "none";
-
-    }
-
-
-    // Spotify link
-
-    if (data.spotifyUrl) {
-
-      spotifyLink.href =
-        data.spotifyUrl;
-
-      spotifyLink.style.display =
-        "inline-block";
-
-    } else {
-
-      spotifyLink.style.display =
-        "none";
-
-    }
-
-
-  } catch (error) {
-
-    console.error(
-      "Spotify error:",
-      error
-    );
-
-
-    spotifyStatus.textContent =
-      "Couldn't load Spotify";
-
-    spotifyTitle.textContent =
-      "";
-
-    spotifyArtist.textContent =
-      "";
-
-    spotifyCover.style.display =
-      "none";
-
-    spotifyLink.style.display =
-      "none";
-
-  }
 
 }
 
@@ -627,6 +605,6 @@ updateSpotify();
 // Refresh every 10 seconds
 
 setInterval(
-  updateSpotify,
-  10000
+    updateSpotify,
+    10000
 );
