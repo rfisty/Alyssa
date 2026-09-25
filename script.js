@@ -437,9 +437,6 @@ const spotifyWorkerUrl =
   "https://aly-spotify.r1borisoff.workers.dev/";
 
 
-const spotifyCard =
-  document.getElementById("spotifyCard");
-
 const spotifyCover =
   document.getElementById("spotifyCover");
 
@@ -461,15 +458,18 @@ async function updateSpotify() {
 
   try {
 
-    const response =
-      await fetch(
-        `${spotifyWorkerUrl}/current`
-      );
+    const response = await fetch(
+      `${spotifyWorkerUrl}/current?t=${Date.now()}`,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    );
 
 
     if (!response.ok) {
       throw new Error(
-        "Spotify request failed"
+        `HTTP ${response.status}`
       );
     }
 
@@ -478,9 +478,18 @@ async function updateSpotify() {
       await response.json();
 
 
-    // Not connected yet
+    // Debug — check browser console
+    console.log(
+      "Spotify response:",
+      data
+    );
 
-    if (!data.connected) {
+
+    // =====================================
+    // NOT CONNECTED
+    // =====================================
+
+    if (data.connected !== true) {
 
       spotifyStatus.textContent =
         "Spotify not connected";
@@ -498,13 +507,14 @@ async function updateSpotify() {
         "none";
 
       return;
-
     }
 
 
-    // Connected but nothing playing
+    // =====================================
+    // CONNECTED BUT NOTHING PLAYING
+    // =====================================
 
-    if (!data.playing) {
+    if (data.playing !== true) {
 
       spotifyStatus.textContent =
         "Not listening right now";
@@ -522,25 +532,26 @@ async function updateSpotify() {
         "none";
 
       return;
-
     }
 
 
-    // Currently playing
+    // =====================================
+    // NOW PLAYING
+    // =====================================
 
     spotifyStatus.textContent =
       "Now playing";
 
 
     spotifyTitle.textContent =
-      data.title || "";
+      data.title || "Unknown song";
 
 
     spotifyArtist.textContent =
-      data.artist || "";
+      data.artist || "Unknown artist";
 
 
-    // Album cover
+    // Album artwork
 
     if (data.image) {
 
@@ -548,7 +559,7 @@ async function updateSpotify() {
         data.image;
 
       spotifyCover.alt =
-        `${data.title} album cover`;
+        `${data.title || "Album"} cover`;
 
       spotifyCover.style.display =
         "block";
@@ -578,9 +589,14 @@ async function updateSpotify() {
 
     }
 
+
   } catch (error) {
 
-    console.error(error);
+    console.error(
+      "Spotify error:",
+      error
+    );
+
 
     spotifyStatus.textContent =
       "Couldn't load Spotify";
