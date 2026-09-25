@@ -434,7 +434,7 @@ function createHeartBurst() {
 
 // CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
 const spotifyWorkerUrl =
-  "https://aly-spotify.r1borisoff.workers.dev/";
+  "https://aly-spotify.r1borisoff.workers.dev";
 
 
 const spotifyCover =
