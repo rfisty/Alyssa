@@ -427,3 +427,190 @@ function createHeartBurst() {
     }
 
 }
+
+// =======================================
+// SPOTIFY CURRENTLY PLAYING
+// =======================================
+
+// CHANGE THIS TO YOUR CLOUDFLARE WORKER URL
+const spotifyWorkerUrl =
+  "https://aly-spotify.r1borisoff.workers.dev/";
+
+
+const spotifyCard =
+  document.getElementById("spotifyCard");
+
+const spotifyCover =
+  document.getElementById("spotifyCover");
+
+const spotifyStatus =
+  document.getElementById("spotifyStatus");
+
+const spotifyTitle =
+  document.getElementById("spotifyTitle");
+
+const spotifyArtist =
+  document.getElementById("spotifyArtist");
+
+const spotifyLink =
+  document.getElementById("spotifyLink");
+
+
+
+async function updateSpotify() {
+
+  try {
+
+    const response =
+      await fetch(
+        `${spotifyWorkerUrl}/current`
+      );
+
+
+    if (!response.ok) {
+      throw new Error(
+        "Spotify request failed"
+      );
+    }
+
+
+    const data =
+      await response.json();
+
+
+    // Not connected yet
+
+    if (!data.connected) {
+
+      spotifyStatus.textContent =
+        "Spotify not connected";
+
+      spotifyTitle.textContent =
+        "";
+
+      spotifyArtist.textContent =
+        "";
+
+      spotifyCover.style.display =
+        "none";
+
+      spotifyLink.style.display =
+        "none";
+
+      return;
+
+    }
+
+
+    // Connected but nothing playing
+
+    if (!data.playing) {
+
+      spotifyStatus.textContent =
+        "Not listening right now";
+
+      spotifyTitle.textContent =
+        "";
+
+      spotifyArtist.textContent =
+        "";
+
+      spotifyCover.style.display =
+        "none";
+
+      spotifyLink.style.display =
+        "none";
+
+      return;
+
+    }
+
+
+    // Currently playing
+
+    spotifyStatus.textContent =
+      "Now playing";
+
+
+    spotifyTitle.textContent =
+      data.title || "";
+
+
+    spotifyArtist.textContent =
+      data.artist || "";
+
+
+    // Album cover
+
+    if (data.image) {
+
+      spotifyCover.src =
+        data.image;
+
+      spotifyCover.alt =
+        `${data.title} album cover`;
+
+      spotifyCover.style.display =
+        "block";
+
+    } else {
+
+      spotifyCover.style.display =
+        "none";
+
+    }
+
+
+    // Spotify link
+
+    if (data.spotifyUrl) {
+
+      spotifyLink.href =
+        data.spotifyUrl;
+
+      spotifyLink.style.display =
+        "inline-block";
+
+    } else {
+
+      spotifyLink.style.display =
+        "none";
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    spotifyStatus.textContent =
+      "Couldn't load Spotify";
+
+    spotifyTitle.textContent =
+      "";
+
+    spotifyArtist.textContent =
+      "";
+
+    spotifyCover.style.display =
+      "none";
+
+    spotifyLink.style.display =
+      "none";
+
+  }
+
+}
+
+
+
+// Load immediately
+
+updateSpotify();
+
+
+// Refresh every 10 seconds
+
+setInterval(
+  updateSpotify,
+  10000
+);
