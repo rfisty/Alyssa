@@ -97,6 +97,40 @@
 
         </section>
 
+        <section class="notes-section">
+
+            <p class="label">Our little note wall</p>
+
+            <form id="noteForm" class="note-form">
+
+                <input id="noteName" class="note-name" type="text" placeholder="Your name" maxlength="30" required>
+
+                <textarea id="noteText" class="note-text" placeholder="Leave a little note..." maxlength="200"
+                    required></textarea>
+
+                <div class="note-form-bottom">
+
+                    <span id="noteCharacters" class="note-characters">
+                        0 / 200
+                    </span>
+
+                    <button class="note-button" type="submit">
+                        Leave note ♡
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <div id="notesList" class="notes-list">
+                <p class="notes-loading">
+                    Loading notes...
+                </p>
+            </div>
+
+        </section>
+
     </main>
 
     <script type="module" src="script.js"></script>

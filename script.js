@@ -9,7 +9,11 @@ import {
     getDatabase,
     ref,
     onValue,
-    runTransaction
+    runTransaction,
+    push,
+    query,
+    orderByChild,
+    limitToLast
 } from
     "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
 
@@ -608,3 +612,399 @@ setInterval(
     updateSpotify,
     10000
 );
+
+// =======================================
+// SHARED NOTE WALL
+// =======================================
+
+const noteForm =
+  document.getElementById("noteForm");
+
+const noteName =
+  document.getElementById("noteName");
+
+const noteText =
+  document.getElementById("noteText");
+
+const noteCharacters =
+  document.getElementById("noteCharacters");
+
+const notesList =
+  document.getElementById("notesList");
+
+
+// Firebase notes location
+
+const notesRef =
+  ref(database, "notes");
+
+
+// Only load the latest 20 notes
+
+const recentNotesQuery =
+  query(
+    notesRef,
+    orderByChild("createdAt"),
+    limitToLast(20)
+  );
+
+
+
+// =======================================
+// REMEMBER NAME
+// =======================================
+
+const savedNoteName =
+  localStorage.getItem("noteName");
+
+
+if (savedNoteName) {
+  noteName.value =
+    savedNoteName;
+}
+
+
+
+noteName.addEventListener(
+  "input",
+  function () {
+
+    localStorage.setItem(
+      "noteName",
+      noteName.value.trim()
+    );
+
+  }
+);
+
+
+
+// =======================================
+// CHARACTER COUNTER
+// =======================================
+
+noteText.addEventListener(
+  "input",
+  function () {
+
+    noteCharacters.textContent =
+      `${noteText.value.length} / 200`;
+
+  }
+);
+
+
+
+// =======================================
+// SEND NOTE
+// =======================================
+
+noteForm.addEventListener(
+  "submit",
+  async function (event) {
+
+    event.preventDefault();
+
+
+    const name =
+      noteName.value.trim();
+
+    const text =
+      noteText.value.trim();
+
+
+    if (!name || !text) {
+      return;
+    }
+
+
+    if (
+      name.length > 30 ||
+      text.length > 200
+    ) {
+      return;
+    }
+
+
+    const button =
+      noteForm.querySelector(
+        ".note-button"
+      );
+
+
+    button.disabled = true;
+
+    button.textContent =
+      "Sending...";
+
+
+    try {
+
+      await push(
+        notesRef,
+        {
+          name,
+          text,
+          createdAt:
+            Date.now()
+        }
+      );
+
+
+      // Keep the name,
+      // clear only the message
+
+      noteText.value =
+        "";
+
+      noteCharacters.textContent =
+        "0 / 200";
+
+
+    } catch (error) {
+
+      console.error(
+        "Could not send note:",
+        error
+      );
+
+      button.textContent =
+        "Try again";
+
+      setTimeout(
+        function () {
+
+          button.textContent =
+            "Leave note ♡";
+
+        },
+        1500
+      );
+
+      button.disabled = false;
+
+      return;
+
+    }
+
+
+    button.textContent =
+      "Sent ♡";
+
+
+    setTimeout(
+      function () {
+
+        button.textContent =
+          "Leave note ♡";
+
+        button.disabled =
+          false;
+
+      },
+      700
+    );
+
+  }
+);
+
+
+
+// =======================================
+// LOAD NOTES LIVE
+// =======================================
+
+onValue(
+  recentNotesQuery,
+  function (snapshot) {
+
+    const notes = [];
+
+
+    snapshot.forEach(
+      function (childSnapshot) {
+
+        const note =
+          childSnapshot.val();
+
+
+        notes.push({
+          id:
+            childSnapshot.key,
+
+          ...note
+        });
+
+      }
+    );
+
+
+    // Newest first
+
+    notes.reverse();
+
+
+    notesList.innerHTML =
+      "";
+
+
+    if (
+      notes.length === 0
+    ) {
+
+      const empty =
+        document.createElement(
+          "p"
+        );
+
+
+      empty.className =
+        "notes-empty";
+
+
+      empty.textContent =
+        "No notes yet ♡";
+
+
+      notesList.appendChild(
+        empty
+      );
+
+
+      return;
+
+    }
+
+
+    notes.forEach(
+      function (note) {
+
+        const card =
+          document.createElement(
+            "article"
+          );
+
+
+        card.className =
+          "note-card";
+
+
+        const top =
+          document.createElement(
+            "div"
+          );
+
+
+        top.className =
+          "note-card-top";
+
+
+        const author =
+          document.createElement(
+            "span"
+          );
+
+
+        author.className =
+          "note-author";
+
+
+        author.textContent =
+          note.name;
+
+
+        const date =
+          document.createElement(
+            "span"
+          );
+
+
+        date.className =
+          "note-date";
+
+
+        date.textContent =
+          formatNoteDate(
+            note.createdAt
+          );
+
+
+        const message =
+          document.createElement(
+            "p"
+          );
+
+
+        message.className =
+          "note-message";
+
+
+        /*
+          textContent is intentional.
+
+          Don't use innerHTML here because
+          notes come from users.
+        */
+
+        message.textContent =
+          note.text;
+
+
+        top.appendChild(
+          author
+        );
+
+
+        top.appendChild(
+          date
+        );
+
+
+        card.appendChild(
+          top
+        );
+
+
+        card.appendChild(
+          message
+        );
+
+
+        notesList.appendChild(
+          card
+        );
+
+      }
+    );
+
+  }
+);
+
+
+
+// =======================================
+// DATE FORMATTER
+// =======================================
+
+function formatNoteDate(
+  timestamp
+) {
+
+  if (!timestamp) {
+    return "";
+  }
+
+
+  const date =
+    new Date(timestamp);
+
+
+  return date.toLocaleDateString(
+    undefined,
+    {
+      month: "short",
+      day: "numeric"
+    }
+  );
+
+}
