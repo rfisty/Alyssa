@@ -459,7 +459,7 @@ async function updateSpotify() {
   try {
 
     const response = await fetch(
-      `${spotifyWorkerUrl}/current`,
+      `${spotifyWorkerUrl}/current?t=${Date.now()}`,
       {
         method: "GET",
         cache: "no-store"
