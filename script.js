@@ -620,9 +620,6 @@ setInterval(
 const noteForm =
   document.getElementById("noteForm");
 
-const noteName =
-  document.getElementById("noteName");
-
 const noteText =
   document.getElementById("noteText");
 
@@ -639,7 +636,7 @@ const notesRef =
   ref(database, "notes");
 
 
-// Only load the latest 20 notes
+// Only load latest 20 notes
 
 const recentNotesQuery =
   query(
@@ -647,35 +644,6 @@ const recentNotesQuery =
     orderByChild("createdAt"),
     limitToLast(20)
   );
-
-
-
-// =======================================
-// REMEMBER NAME
-// =======================================
-
-const savedNoteName =
-  localStorage.getItem("noteName");
-
-
-if (savedNoteName) {
-  noteName.value =
-    savedNoteName;
-}
-
-
-
-noteName.addEventListener(
-  "input",
-  function () {
-
-    localStorage.setItem(
-      "noteName",
-      noteName.value.trim()
-    );
-
-  }
-);
 
 
 
@@ -706,22 +674,16 @@ noteForm.addEventListener(
     event.preventDefault();
 
 
-    const name =
-      noteName.value.trim();
-
     const text =
       noteText.value.trim();
 
 
-    if (!name || !text) {
+    if (!text) {
       return;
     }
 
 
-    if (
-      name.length > 30 ||
-      text.length > 200
-    ) {
+    if (text.length > 200) {
       return;
     }
 
@@ -743,16 +705,12 @@ noteForm.addEventListener(
       await push(
         notesRef,
         {
-          name,
           text,
           createdAt:
             Date.now()
         }
       );
 
-
-      // Keep the name,
-      // clear only the message
 
       noteText.value =
         "";
@@ -768,8 +726,10 @@ noteForm.addEventListener(
         error
       );
 
+
       button.textContent =
         "Try again";
+
 
       setTimeout(
         function () {
@@ -781,7 +741,10 @@ noteForm.addEventListener(
         1500
       );
 
-      button.disabled = false;
+
+      button.disabled =
+        false;
+
 
       return;
 
@@ -848,9 +811,7 @@ onValue(
       "";
 
 
-    if (
-      notes.length === 0
-    ) {
+    if (notes.length === 0) {
 
       const empty =
         document.createElement(
@@ -889,33 +850,9 @@ onValue(
           "note-card";
 
 
-        const top =
-          document.createElement(
-            "div"
-          );
-
-
-        top.className =
-          "note-card-top";
-
-
-        const author =
-          document.createElement(
-            "span"
-          );
-
-
-        author.className =
-          "note-author";
-
-
-        author.textContent =
-          note.name;
-
-
         const date =
           document.createElement(
-            "span"
+            "div"
           );
 
 
@@ -940,33 +877,21 @@ onValue(
 
 
         /*
-          textContent is intentional.
-
-          Don't use innerHTML here because
-          notes come from users.
+          Use textContent so notes
+          can't inject HTML/JavaScript
         */
 
         message.textContent =
           note.text;
 
 
-        top.appendChild(
-          author
-        );
-
-
-        top.appendChild(
-          date
-        );
-
-
-        card.appendChild(
-          top
-        );
-
-
         card.appendChild(
           message
+        );
+
+
+        card.appendChild(
+          date
         );
 
 
@@ -983,7 +908,7 @@ onValue(
 
 
 // =======================================
-// DATE FORMATTER
+// DATE + TIME FORMATTER
 // =======================================
 
 function formatNoteDate(
@@ -999,11 +924,14 @@ function formatNoteDate(
     new Date(timestamp);
 
 
-  return date.toLocaleDateString(
+  return date.toLocaleString(
     undefined,
     {
       month: "short",
-      day: "numeric"
+      day: "numeric",
+
+      hour: "numeric",
+      minute: "2-digit"
     }
   );
 
