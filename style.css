@@ -672,27 +672,6 @@ body::before {
 }
 
 
-.spotify-link {
-  display: none;
-
-  color: var(--pink);
-
-  text-decoration: none;
-
-  font-size: 0.85rem;
-
-  border-bottom:
-    1px solid rgba(246, 181, 170, 0.5);
-
-  padding-bottom: 2px;
-}
-
-
-.spotify-link:hover {
-  border-color: var(--pink);
-}
-
-
 @media (max-width: 650px) {
 
   .spotify-card {
