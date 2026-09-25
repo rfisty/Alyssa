@@ -617,6 +617,33 @@ setInterval(
 // SHARED NOTE WALL
 // =======================================
 
+
+// ---------------------------------------
+// LOCAL DEVICE ID
+// ---------------------------------------
+
+let mySenderId =
+  localStorage.getItem("noteSenderId");
+
+
+if (!mySenderId) {
+
+  mySenderId =
+    crypto.randomUUID();
+
+  localStorage.setItem(
+    "noteSenderId",
+    mySenderId
+  );
+
+}
+
+
+
+// ---------------------------------------
+// ELEMENTS
+// ---------------------------------------
+
 const noteForm =
   document.getElementById("noteForm");
 
@@ -630,13 +657,14 @@ const notesList =
   document.getElementById("notesList");
 
 
-// Firebase notes location
+
+// ---------------------------------------
+// FIREBASE REFERENCES
+// ---------------------------------------
 
 const notesRef =
   ref(database, "notes");
 
-
-// Only load latest 20 notes
 
 const recentNotesQuery =
   query(
@@ -647,9 +675,9 @@ const recentNotesQuery =
 
 
 
-// =======================================
+// ---------------------------------------
 // CHARACTER COUNTER
-// =======================================
+// ---------------------------------------
 
 noteText.addEventListener(
   "input",
@@ -663,9 +691,9 @@ noteText.addEventListener(
 
 
 
-// =======================================
+// ---------------------------------------
 // SEND NOTE
-// =======================================
+// ---------------------------------------
 
 noteForm.addEventListener(
   "submit",
@@ -707,7 +735,10 @@ noteForm.addEventListener(
         {
           text,
           createdAt:
-            Date.now()
+            Date.now(),
+
+          senderId:
+            mySenderId
         }
       );
 
@@ -717,6 +748,10 @@ noteForm.addEventListener(
 
       noteCharacters.textContent =
         "0 / 200";
+
+
+      button.textContent =
+        "Sent ♡";
 
 
     } catch (error) {
@@ -737,22 +772,17 @@ noteForm.addEventListener(
           button.textContent =
             "Leave note ♡";
 
+          button.disabled =
+            false;
+
         },
         1500
       );
 
 
-      button.disabled =
-        false;
-
-
       return;
 
     }
-
-
-    button.textContent =
-      "Sent ♡";
 
 
     setTimeout(
@@ -773,9 +803,9 @@ noteForm.addEventListener(
 
 
 
-// =======================================
+// ---------------------------------------
 // LOAD NOTES LIVE
-// =======================================
+// ---------------------------------------
 
 onValue(
   recentNotesQuery,
@@ -850,6 +880,34 @@ onValue(
           "note-card";
 
 
+        // Mark notes created on this device
+
+        if (
+          note.senderId ===
+          mySenderId
+        ) {
+
+          card.classList.add(
+            "my-note"
+          );
+
+        }
+
+
+        const message =
+          document.createElement(
+            "p"
+          );
+
+
+        message.className =
+          "note-message";
+
+
+        message.textContent =
+          note.text;
+
+
         const date =
           document.createElement(
             "div"
@@ -864,25 +922,6 @@ onValue(
           formatNoteDate(
             note.createdAt
           );
-
-
-        const message =
-          document.createElement(
-            "p"
-          );
-
-
-        message.className =
-          "note-message";
-
-
-        /*
-          Use textContent so notes
-          can't inject HTML/JavaScript
-        */
-
-        message.textContent =
-          note.text;
 
 
         card.appendChild(
@@ -907,9 +946,9 @@ onValue(
 
 
 
-// =======================================
-// DATE + TIME FORMATTER
-// =======================================
+// ---------------------------------------
+// DATE + TIME
+// ---------------------------------------
 
 function formatNoteDate(
   timestamp
